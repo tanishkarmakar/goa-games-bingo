@@ -137,6 +137,13 @@ body:not(.clean) .urltext{display:none}
 .name small{font:700 .66rem var(--mono);color:var(--gold);margin-left:.3rem}
 .hint{color:var(--dim);font-size:.82rem}
 body.clean .ctl{display:none!important}
+body.view .top .row{display:none}
+body.view .time{font-size:clamp(3rem,13vh,8.5rem)}
+body.view .status{font-size:clamp(1rem,2.6vh,1.5rem)}
+.unlock{position:fixed;left:50%;bottom:1.25rem;transform:translateX(-50%);z-index:60;font:800 .95rem var(--body);color:#fff;background:rgba(18,10,38,.9);border:1px solid var(--line-hi);border-radius:999px;padding:.7rem 1.2rem;cursor:pointer;box-shadow:0 0 0 4px rgba(46,240,255,.18),0 10px 40px rgba(0,0,0,.5)}
+.unlock b{color:var(--cyan)}
+.live{display:inline-flex;align-items:center;gap:.4rem}
+.live::before{content:"";width:.5rem;height:.5rem;border-radius:50%;background:var(--cyan);box-shadow:0 0 10px var(--cyan)}
 
 /* celebration */
 .cele{position:fixed;inset:0;z-index:40;display:grid;place-items:center;padding:16px;background:rgba(3,1,8,.72)}
@@ -167,6 +174,7 @@ body.clean .ctl{display:none!important}
     <div><p class="eyebrow">Host screen</p><h1 class="title">BINGO, BONGO, BANGO!</h1></div>
     <div class="row">
       <button class="btn small" id="soundBtn" type="button" aria-pressed="true">Sound on</button>
+      <button class="btn small" id="tvBtn" type="button" title="Open the TV screen. It mirrors this one, minus the controls.">Open TV view</button>
       <button class="btn small" id="cleanBtn" type="button" aria-pressed="false">Hide controls</button>
       <button class="btn small ctl" id="fsBtn" type="button">Full screen</button>
     </div>
@@ -289,15 +297,18 @@ body.clean .ctl{display:none!important}
   var KEY='gg-host-v2';
   var TIERS={b:{word:'BINGO',sub:' to BINGO',icon:'🪩',empty:'Someone\'s close.'},o:{word:'BONGO',sub:' to BONGO',icon:'🎶',empty:'Two lines. Big ask.'},f:{word:'BANGO',sub:' to BANGO',icon:'✨',empty:'Full card. Legend tier.'}};
   var $=function(id){return document.getElementById(id)};
+  var VIEW=!!window.GG_VIEW,PING='gg-display-ping';
+  function tvOn(){try{return Date.now()-(+localStorage.getItem(PING)||0)<6000}catch(e){return false}}
   function load(){try{var s=JSON.parse(localStorage.getItem(KEY));if(s&&s.b&&s.f)return s}catch(e){}return {b:[],f:[],min:20,link:DEFAULT_LINK,end:null,left:null}}
   var S=load();if(!S.o)S.o=[];if(S.sound===undefined)S.sound=true;
-  function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+  function save(){if(VIEW)return;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 
   var actx=null;
-  function tones(freqs,step,dur,type){if(!S.sound)return;try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();if(actx.state==='suspended')actx.resume();var t=actx.currentTime;freqs.forEach(function(f,i){var o=actx.createOscillator(),g=actx.createGain(),s=t+i*step;o.type=type||'triangle';o.frequency.value=f;g.gain.setValueAtTime(.0001,s);g.gain.exponentialRampToValueAtTime(.22,s+.02);g.gain.exponentialRampToValueAtTime(.0001,s+dur);o.connect(g);g.connect(actx.destination);o.start(s);o.stop(s+dur+.05)})}catch(e){}}
+  function tones(freqs,step,dur,type){if(!S.sound)return;if(!VIEW&&tvOn())return;try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();if(actx.state==='suspended')actx.resume();var t=actx.currentTime;freqs.forEach(function(f,i){var o=actx.createOscillator(),g=actx.createGain(),s=t+i*step;o.type=type||'triangle';o.frequency.value=f;g.gain.setValueAtTime(.0001,s);g.gain.exponentialRampToValueAtTime(.22,s+.02);g.gain.exponentialRampToValueAtTime(.0001,s+dur);o.connect(g);g.connect(actx.destination);o.start(s);o.stop(s+dur+.05)})}catch(e){}}
   var SND={b:function(){tones([523,659,784,1047],.11,.35)},o:function(){tones([587,740,880,1175,880,1175],.09,.3,'square')},f:function(){tones([523,659,784,1047,1319,1568,2093],.09,.45)},warn:function(){tones([880,880],.25,.2,'sine')},end:function(){tones([784,659,523,392],.18,.5)},start:function(){tones([392,523],.12,.25)}};
   var soundBtn=$('soundBtn');
-  function markSound(){soundBtn.setAttribute('aria-pressed',S.sound?'true':'false');soundBtn.textContent=S.sound?'Sound on':'Sound off'}
+  function markSound(){soundBtn.setAttribute('aria-pressed',S.sound?'true':'false');soundBtn.textContent=S.sound?(tvOn()?'Sound on TV':'Sound on'):'Sound off'}
+  if(!VIEW)setInterval(markSound,3000);
   soundBtn.addEventListener('click',function(){S.sound=!S.sound;save();markSound();if(S.sound)SND.start()});
   markSound();
 
@@ -389,6 +400,36 @@ body.clean .ctl{display:none!important}
   cleanBtn.addEventListener('click',function(){setClean(!document.body.classList.contains('clean'))});
   document.addEventListener('keydown',function(e){var tag=document.activeElement&&document.activeElement.tagName;if((e.key==='h'||e.key==='H')&&!/INPUT|SELECT|TEXTAREA/.test(tag))setClean(!document.body.classList.contains('clean'));if(e.key==='Escape')cele.hidden=true});
   $('fsBtn').addEventListener('click',function(){var d=document.documentElement;if(document.fullscreenElement){document.exitFullscreen&&document.exitFullscreen().catch(function(){})}else if(d.requestFullscreen){d.requestFullscreen().catch(function(){})}});
+
+  $('tvBtn').addEventListener('click',function(){var w=window.open('display.html','gg-tv','popup,width=1280,height=720');if(w)w.focus();else location.href='display.html'});
+
+  if(VIEW){
+    document.body.classList.add('clean','view');document.title='BINGO, BONGO, BANGO!';
+    var eb=document.querySelector('.top .eyebrow');eb.textContent='Sales Cloud UX · Live';eb.classList.add('live');
+    function ping(){if(document.hidden)return;try{localStorage.setItem(PING,String(Date.now()))}catch(e){}}
+    ping();setInterval(ping,2000);document.addEventListener('visibilitychange',ping);
+    addEventListener('pagehide',function(){try{localStorage.removeItem(PING)}catch(e){}});
+    var un=document.createElement('button');un.type='button';un.className='unlock';un.innerHTML='Click once for <b>sound</b> + <b>full screen</b>';
+    un.addEventListener('click',function(){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();actx.resume()}catch(e){}
+      var d=document.documentElement;if(d.requestFullscreen)d.requestFullscreen().catch(function(){});
+      if(navigator.wakeLock)navigator.wakeLock.request('screen').catch(function(){});un.remove()});
+    document.body.appendChild(un);
+    addEventListener('storage',function(e){
+      if(e.key!==KEY||!e.newValue)return;var n;try{n=JSON.parse(e.newValue)}catch(x){return}if(!n||!n.b||!n.f)return;if(!n.o)n.o=[];
+      var prev={b:S.b.length,o:S.o.length,f:S.f.length},oldEnd=S.end,oldLink=S.link;S=n;
+      if(S.end&&!oldEnd){warned=S.end-Date.now()<=5*60000;ended=false;SND.start();run()}
+      else if(S.end){if(S.end-Date.now()>5*60000)warned=false;ended=false;run()}
+      else{clearInterval(iv);iv=null;
+        if(S.left===0&&oldEnd&&!ended){ended=true;SND.end();confetti()}
+        if(S.left==null){warned=false;ended=false}}
+      paint();
+      var hit=null;['b','o','f'].forEach(function(k){if(S[k].length>prev[k])hit=k});
+      if(hit){var arr=S[hit];freshKey=hit+(arr.length-1)}
+      render();
+      if(hit){celebrate(TIERS[hit].word+'!',arr[arr.length-1].name,ord(arr.length)+TIERS[hit].sub);SND[hit]()}
+      if(S.link!==oldLink)drawQR();
+    });
+  }
 
   function confetti(){if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)return;var cv=$('confetti');if(!cv.getContext)return;
     var ctx=cv.getContext('2d'),W=cv.width=innerWidth,H=cv.height=innerHeight,cols=['#ff2fb3','#8b5cff','#2ef0ff','#ffcf3d','#ffffff'];
