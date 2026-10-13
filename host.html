@@ -33,7 +33,7 @@
 *{box-sizing:border-box}
 html,button,a,input,.sq,.name{touch-action:manipulation}
 body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:1rem;line-height:1.45;margin:0;overflow-x:hidden}
-.wrap{max-width:92rem;margin:0 auto;padding-inline:max(16px,2.5vw);padding-block:.75rem 1rem;display:grid;gap:.85rem}
+.wrap{max-width:92rem;margin:0 auto;padding-inline:max(16px,2.5vw);padding-block:.6rem .4rem;display:grid;gap:.85rem}
 h1,h2,h3{margin:0;text-wrap:balance}
 p{margin:0}
 button{font-family:inherit}
@@ -131,6 +131,34 @@ body.clean .list{max-height:none}
 .name small{font:700 .66rem var(--mono);color:var(--mango);margin-left:.3rem}
 .hint{color:var(--muted);font-size:.85rem}
 
+
+/* board: matches the left column's height; lists scroll inside, logging pinned to the bottom */
+.stage{align-items:stretch}
+.board{display:flex;flex-direction:column;gap:.85rem;height:0;min-height:100%;overflow:hidden}
+@media (max-width:60rem){.board{height:auto;min-height:0;overflow:visible}}
+.board .cols{flex:1 1 auto;min-height:0}
+.board .col{display:flex;flex-direction:column;min-height:0;background:var(--bg);border-radius:18px;padding:.7rem;gap:.55rem}
+.board .list{flex:1 1 auto;min-height:0;max-height:none;overflow:auto;scrollbar-width:thin;padding-right:2px}
+@media (max-width:60rem){.board .list{max-height:22rem}}
+.board .list li{background:var(--card)}
+.board .log{margin-top:auto}
+.pill{font:800 .78rem var(--mono);letter-spacing:.08em;text-transform:uppercase;background:var(--mango-soft);color:var(--mango);border-radius:999px;padding:.32rem .75rem}
+.col h3 .dot{width:.7rem;height:.7rem;border-radius:50%;background:var(--mango);flex:none}
+.colF h3 .dot{background:var(--tile)}
+.col h3 .count{margin-left:auto;font:800 .8rem var(--mono);background:var(--card);border:1.5px solid var(--line);border-radius:999px;padding:.1rem .55rem;color:var(--ink);font-variant-numeric:tabular-nums}
+.colF .list li:first-child{background:var(--tile-soft);border-color:var(--tile)}
+.colF .list li:first-child .pos,.colF .pos{color:var(--tile)}
+.board .empty{display:grid!important;place-items:center;align-content:center;gap:.35rem;text-align:center;min-height:6.5rem;height:100%;border:1.5px dashed var(--line)}
+.board .empty::before{content:attr(data-icon);font-size:1.8rem;line-height:1;opacity:.8}
+
+
+.board .list{align-content:start}
+body:not(.clean) .urltext{display:none}
+.linkrow{flex-wrap:nowrap}
+.linkrow input{flex:1 1 auto;width:0}
+.scan-text{gap:.35rem}
+.scan-text h2{font-size:clamp(1.25rem,2.3vw,1.6rem)}
+.clock{padding-block:.9rem}
 body.clean .ctl{display:none!important}
 
 /* celebration */
@@ -211,11 +239,11 @@ body.clean .ctl{display:none!important}
       </section>
     </div>
 
-    <section class="panel" aria-label="Winners">
-      <div class="boardhead"><h2>Hall of Fame</h2><span class="eyebrow" id="total">0 winners</span></div>
+    <section class="panel board" aria-label="Winners">
+      <div class="boardhead"><h2>Hall of Fame</h2><span class="pill" id="total">0 winners</span></div>
       <div class="cols">
-        <div class="col"><h3>BINGO! <span class="tag">first line</span></h3><ol class="list" id="listB"></ol></div>
-        <div class="col"><h3>FULL HOUSE! <span class="tag">full card</span></h3><ol class="list" id="listF"></ol></div>
+        <div class="col colB"><h3><span class="dot" aria-hidden="true"></span>BINGO! <span class="tag">first line</span><span class="count" id="countB">0</span></h3><ol class="list" id="listB"></ol></div>
+        <div class="col colF"><h3><span class="dot" aria-hidden="true"></span>FULL HOUSE! <span class="tag">full card</span><span class="count" id="countF">0</span></h3><ol class="list" id="listF"></ol></div>
       </div>
       <div class="log ctl">
         <div class="row" style="justify-content:space-between">
@@ -324,7 +352,7 @@ body.clean .ctl{display:none!important}
   function stamp(){if(started()){return fmt(total()-leftNow())+' in'}var d=new Date();return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')}
   function renderList(el,arr,kind){
     el.innerHTML='';
-    if(!arr.length){var e=document.createElement('li');e.className='empty';e.textContent=kind==='b'?'No Bingos yet. Somebody\'s close.':'Nobody yet. Sixteen squares is a lot.';el.appendChild(e);return}
+    if(!arr.length){var e=document.createElement('li');e.className='empty';e.setAttribute('data-icon',kind==='b'?'🥭':'🥥');e.textContent=kind==='b'?'No Bingos yet. Somebody\'s close.':'Nobody yet. Sixteen squares is a lot.';el.appendChild(e);return}
     arr.forEach(function(it,i){
       var li=document.createElement('li');if(freshKey===kind+i)li.className='fresh';
       var p=document.createElement('span');p.className='pos';p.textContent=ord(i+1);
@@ -344,7 +372,7 @@ body.clean .ctl{display:none!important}
       b.addEventListener('click',function(){add(n)});g.appendChild(b);
     });
   }
-  function render(){renderList(listB,S.b,'b');renderList(listF,S.f,'f');var t=S.b.length+S.f.length;$('total').textContent=t+(t===1?' winner':' winners');drawNames();freshKey=null}
+  function render(){renderList(listB,S.b,'b');renderList(listF,S.f,'f');var t=S.b.length+S.f.length;$('total').textContent=t+(t===1?' winner':' winners');$('countB').textContent=S.b.length;$('countF').textContent=S.f.length;drawNames();freshKey=null}
   function setMode(m){mode=m;$('modeB').setAttribute('aria-pressed',m==='b'?'true':'false');$('modeF').setAttribute('aria-pressed',m==='f'?'true':'false');$('hint').textContent='Tap a name to log a '+(m==='b'?'Bingo':'Full house')+'. Tap × on the board to undo.';drawNames()}
   $('modeB').addEventListener('click',function(){setMode('b')});
   $('modeF').addEventListener('click',function(){setMode('f')});
