@@ -161,8 +161,11 @@ body.view .status{font-size:clamp(1rem,2.6vh,1.5rem)}
 
 /* intro deck (TV only) */
 .deck{position:fixed;inset:0;z-index:30;display:none;font-size:clamp(16px,1.17vw,32px);cursor:pointer;user-select:none}
-body.view.deckon .deck{display:block}
-body.view.deckon .wrap{visibility:hidden}
+body.deckon .deck{display:block}
+body.deckon .wrap{visibility:hidden}
+.deckctl{display:inline-flex;align-items:center;gap:.4rem;letter-spacing:normal;text-transform:none;font-family:var(--body)}
+body.view .deckctl{display:none}
+body:not(.view) #deckHint{display:none}
 .slide{position:absolute;inset:0;display:grid;align-content:center;gap:clamp(1em,3vh,2.2em);padding:clamp(2em,7vh,5em) clamp(2em,8vw,9em) clamp(5em,12vh,7em);opacity:0;visibility:hidden;transform:translateY(16px) scale(.99);transition:opacity .5s ease,transform .6s cubic-bezier(.2,.9,.3,1),visibility 0s .5s}
 .slide.on{opacity:1;visibility:visible;transform:none;transition:opacity .5s ease,transform .6s cubic-bezier(.2,.9,.3,1)}
 .sk{font:700 clamp(.8em,1.3vw,1.1em) var(--mono);letter-spacing:.22em;text-transform:uppercase;color:var(--cyan)}
@@ -207,8 +210,7 @@ body.view.deckon .wrap{visibility:hidden}
 .dots i{width:.6em;height:.6em;border-radius:999px;background:rgba(255,255,255,.2);transition:width .3s,background .3s}
 .dots i.on{width:2em;background:var(--hot)}
 .deckfoot .brand{font-family:var(--display);letter-spacing:.04em;color:var(--muted)}
-.deckbar{display:inline-flex;align-items:center;gap:.35rem;padding:.2rem .25rem .2rem .7rem;border:1px solid var(--line-hi);border-radius:999px;background:rgba(255,255,255,.04)}
-.deckbar .lbl{font:700 .7rem var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--cyan);white-space:nowrap}
+.deckctl .lbl{font:700 .7rem var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--cyan);white-space:nowrap}
 @media (prefers-reduced-motion:no-preference){
   .deck .ball .facets{animation:spin 1.6s linear infinite}
   .deck .ball .spark{animation:twinkle 2.4s ease-in-out infinite}
@@ -238,7 +240,6 @@ body.view.deckon .wrap{visibility:hidden}
     <div><p class="eyebrow">Host screen</p><h1 class="title">BINGO, BONGO, BANGO!</h1></div>
     <div class="row">
       <button class="btn small" id="soundBtn" type="button" aria-pressed="true">Sound on</button>
-      <span class="deckbar ctl" id="deckbar"><span class="lbl" id="dkLabel">Deck 1/6</span><button class="btn small" id="dkBack" type="button" aria-label="Previous slide">‹</button><button class="btn small primary" id="dkNext" type="button">Next ›</button></span>
       <button class="btn small ctl" id="dkShow" type="button" hidden>Show intro deck</button>
       <button class="btn small" id="tvBtn" type="button" title="Open the TV screen. It mirrors this one, minus the controls.">Open TV view</button>
       <button class="btn small" id="cleanBtn" type="button" aria-pressed="false">Hide controls</button>
@@ -403,7 +404,7 @@ body.view.deckon .wrap{visibility:hidden}
     <div class="mega" id="deckTime">20:00</div>
     <p class="sp">Go find your people.</p>
   </section>
-  <div class="deckfoot"><span class="brand">BINGO, BONGO, BANGO!</span><span class="dots" id="dots"></span><span id="deckHint">→ next</span></div>
+  <div class="deckfoot"><span class="brand">BINGO, BONGO, BANGO!</span><span class="dots" id="dots"></span><span id="deckHint">→ next</span><span class="deckctl" id="deckbar"><span class="lbl" id="dkLabel">Slide 1/6</span><button class="btn small" id="dkBack" type="button" aria-label="Previous slide">‹ Back</button><button class="btn small primary" id="dkNext" type="button">Next ›</button><button class="btn small" id="dkTv" type="button">Open TV view</button><button class="btn small" id="dkSkip" type="button">Skip to controls</button></span></div>
 </div>
 
 <div class="cele" id="cele" hidden>
@@ -556,7 +557,8 @@ body.view.deckon .wrap{visibility:hidden}
   document.addEventListener('keydown',function(e){var tag=document.activeElement&&document.activeElement.tagName;if((e.key==='h'||e.key==='H')&&!/INPUT|SELECT|TEXTAREA/.test(tag))setClean(!document.body.classList.contains('clean'));if(e.key==='Escape')cele.hidden=true});
   $('fsBtn').addEventListener('click',function(){var d=document.documentElement;if(document.fullscreenElement){document.exitFullscreen&&document.exitFullscreen().catch(function(){})}else if(d.requestFullscreen){d.requestFullscreen().catch(function(){})}});
 
-  $('tvBtn').addEventListener('click',function(){var w=window.open('display.html','gg-tv','popup,width=1280,height=720');if(w)w.focus();else location.href='display.html'});
+  function openTV(){var w=window.open('display.html','gg-tv','popup,width=1280,height=720');if(w)w.focus();else location.href='display.html'}
+  $('tvBtn').addEventListener('click',openTV);
 
   var DK='gg-deck',slides=[].slice.call(document.querySelectorAll('.slide')),NS=slides.length,dots=$('dots');
   slides.forEach(function(){dots.appendChild(document.createElement('i'))});
@@ -566,11 +568,13 @@ body.view.deckon .wrap{visibility:hidden}
     slides.forEach(function(sl,j){var on=Dk.on&&j===Dk.i;sl.classList.toggle('on',on);sl.setAttribute('aria-hidden',on?'false':'true')});
     [].forEach.call(dots.children,function(d,j){d.classList.toggle('on',j===Dk.i)});
     var last=Dk.i===NS-1;$('deckHint').textContent=last?'→ go live':'→ next';
-    $('deckbar').hidden=!Dk.on;$('dkShow').hidden=!!Dk.on;$('dkLabel').textContent='Deck '+(Dk.i+1)+'/'+NS;
+    $('deckbar').hidden=!Dk.on;$('dkShow').hidden=!!Dk.on;$('dkLabel').textContent='Slide '+(Dk.i+1)+'/'+NS;
     $('dkNext').textContent=last?'Go live ›':'Next ›';$('dkBack').disabled=Dk.i===0}
   function goSlide(i){if(i>=NS)Dk={on:false,i:NS-1};else Dk={on:true,i:Math.max(0,i)};try{localStorage.setItem(DK,JSON.stringify(Dk))}catch(e){}drender()}
   function dNext(){goSlide(Dk.on?Dk.i+1:0)}function dBack(){if(Dk.on)goSlide(Dk.i-1)}
-  $('dkNext').addEventListener('click',dNext);$('dkBack').addEventListener('click',dBack);$('dkShow').addEventListener('click',function(){goSlide(0)});
+  $('dkNext').addEventListener('click',dNext);$('dkBack').addEventListener('click',dBack);$('dkShow').addEventListener('click',function(){goSlide(0)});$('dkSkip').addEventListener('click',function(){goSlide(NS)});$('dkTv').addEventListener('click',openTV);
+  $('deckbar').addEventListener('click',function(e){e.stopPropagation()});
+  if(!VIEW)$('deck').addEventListener('click',function(e){if(e.clientX<innerWidth*.2)dBack();else dNext()});
   addEventListener('storage',function(e){if(e.key===DK){Dk=dload();drender()}});
   document.addEventListener('keydown',function(e){if(!Dk.on)return;var tag=document.activeElement&&document.activeElement.tagName;if(/INPUT|SELECT|TEXTAREA/.test(tag))return;
     var fwd=e.key==='ArrowRight'||e.key==='PageDown'||(VIEW&&(e.key===' '||e.key==='Enter'||e.key==='ArrowDown'));var bk=e.key==='ArrowLeft'||e.key==='PageUp'||(VIEW&&e.key==='ArrowUp');
