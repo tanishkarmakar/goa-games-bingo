@@ -51,6 +51,17 @@ button{font-family:inherit}
 .btn.small{font-size:.82rem;padding:.38rem .8rem}
 .btn.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .row{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap}
+.presets,.nudge{justify-content:center;gap:.35rem}
+.presets .btn,.nudge .btn{min-width:2.9rem}
+.custom{justify-content:center;gap:.4rem}
+.custom label{font-weight:800;font-size:.85rem;color:var(--muted)}
+.custom input{font:700 .95rem var(--mono);color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:.38rem .5rem;width:5rem;text-align:center}
+.custom input:focus{outline:none;border-color:var(--tile)}
+.custom .unit{font-weight:700;font-size:.85rem;color:var(--muted)}
+.custom.bad input{border-color:var(--warn)}
+body.ticking .presets,body.ticking .custom{display:none}
+body:not(.ticking) .nudge{display:none}
+.clock{gap:.6rem}
 
 .stage{display:grid;grid-template-columns:minmax(19rem,.85fr) minmax(0,1.5fr);gap:.85rem;align-items:start}
 @media (max-width:60rem){.stage{grid-template-columns:1fr}}
@@ -59,7 +70,7 @@ button{font-family:inherit}
 
 /* clock */
 .clock{justify-items:center;text-align:center}
-.ring{position:relative;width:min(17.5rem,34vh,76vw);aspect-ratio:1;max-width:100%}
+.ring{position:relative;width:min(16rem,28vh,76vw);aspect-ratio:1;max-width:100%}
 body.clean .ring{width:min(21rem,42vh,76vw)}
 .ring svg{width:100%;height:100%;transform:rotate(-90deg)}
 .ring .trk{fill:none;stroke:var(--line);stroke-width:13}
@@ -158,10 +169,25 @@ body.clean .ctl{display:none!important}
           <svg viewBox="0 0 200 200" aria-hidden="true"><circle class="trk" cx="100" cy="100" r="88"/><circle class="val" id="ringVal" cx="100" cy="100" r="88" stroke-dasharray="552.92" stroke-dashoffset="0"/></svg>
           <div class="face"><div class="time" id="time" aria-live="polite">20:00</div><div class="status" id="status">Ready when you are</div></div>
         </div>
-        <div class="row ctl" role="group" aria-label="Game length">
-          <button class="btn small len" type="button" data-min="15" aria-pressed="false">15 min</button>
-          <button class="btn small len on" type="button" data-min="20" aria-pressed="true">20 min</button>
-          <button class="btn small len" type="button" data-min="25" aria-pressed="false">25 min</button>
+        <div class="row ctl presets" role="group" aria-label="Game length">
+          <button class="btn small len" type="button" data-min="5" aria-pressed="false">5</button>
+          <button class="btn small len" type="button" data-min="10" aria-pressed="false">10</button>
+          <button class="btn small len" type="button" data-min="15" aria-pressed="false">15</button>
+          <button class="btn small len on" type="button" data-min="20" aria-pressed="true">20</button>
+          <button class="btn small len" type="button" data-min="25" aria-pressed="false">25</button>
+          <button class="btn small len" type="button" data-min="30" aria-pressed="false">30 min</button>
+        </div>
+        <form class="row ctl custom" id="customForm" novalidate>
+          <label for="customMin">Custom</label>
+          <input id="customMin" type="number" inputmode="decimal" min="0.5" max="180" step="0.5" placeholder="12">
+          <span class="unit">min</span>
+          <button class="btn small" type="submit">Set</button>
+        </form>
+        <div class="row ctl nudge" role="group" aria-label="Adjust time">
+          <button class="btn small" type="button" data-adj="-60">−1 min</button>
+          <button class="btn small" type="button" data-adj="-30">−30 s</button>
+          <button class="btn small" type="button" data-adj="30">+30 s</button>
+          <button class="btn small" type="button" data-adj="60">+1 min</button>
         </div>
         <div class="row ctl">
           <button class="btn primary" id="goBtn" type="button">Start</button>
@@ -245,6 +271,7 @@ body.clean .ctl{display:none!important}
   function leftNow(){if(S.end)return S.end-Date.now();if(S.left!=null)return S.left;return total()}
   function started(){return !!S.end||S.left!=null}
   function paint(){
+    document.body.classList.toggle('ticking',started()&&leftNow()>0);
     var l=leftNow();val.setAttribute('stroke-dashoffset',String(C*(1-Math.max(0,l)/total())));
     ring.classList.toggle('late',started()&&l<=5*60000&&l>0);
     if(started()&&l<=0){timeEl.textContent='Time!';timeEl.classList.add('done');status.textContent='Everyone, back to the middle';goBtn.textContent='Start';return}
@@ -264,13 +291,30 @@ body.clean .ctl{display:none!important}
     if(S.end){S.left=Math.max(0,S.end-Date.now());S.end=null;clearInterval(iv);iv=null;save();paint();return}
     if(S.left===0){S.left=null}
     if(S.left==null){warned=false;ended=false}
-    S.end=Date.now()+(S.left!=null?S.left:total());S.left=null;save();SND.start();run();
+    S.end=Date.now()+(S.left!=null?S.left:total());S.left=null;save();SND.start();run();markLen();
     if(navigator.wakeLock){navigator.wakeLock.request('screen').catch(function(){})}
   });
-  $('resetBtn').addEventListener('click',function(){clearInterval(iv);iv=null;S.end=null;S.left=null;warned=false;ended=false;save();paint()});
+  $('resetBtn').addEventListener('click',function(){clearInterval(iv);iv=null;S.end=null;S.left=null;warned=false;ended=false;save();paint();markLen()});
   var lens=[].slice.call(document.querySelectorAll('.len'));
-  function markLen(){lens.forEach(function(b){var on=+b.dataset.min===S.min;b.classList.toggle('on',on);b.setAttribute('aria-pressed',on?'true':'false')})}
-  lens.forEach(function(b){b.addEventListener('click',function(){if(S.end)return;S.min=+b.dataset.min;S.left=null;save();markLen();paint()})});
+  function markLen(){lens.forEach(function(b){var on=+b.dataset.min===S.min&&!S.end&&S.left==null;b.classList.toggle('on',on);b.setAttribute('aria-pressed',on?'true':'false')})}
+  function setLength(min){S.min=min;S.end=null;S.left=null;clearInterval(iv);iv=null;warned=false;ended=false;save();markLen();paint()}
+  lens.forEach(function(b){b.addEventListener('click',function(){if(S.end)return;setLength(+b.dataset.min)})});
+  var customForm=$('customForm'),customMin=$('customMin');
+  customForm.addEventListener('submit',function(e){
+    e.preventDefault();var v=parseFloat(String(customMin.value).replace(',','.'));
+    if(!(v>=0.5&&v<=180)){customForm.classList.add('bad');customMin.focus();return}
+    customForm.classList.remove('bad');
+    if(S.end){var l=Math.round(v*60000);S.min=Math.max(S.min,v);S.end=Date.now()+l;warned=l<=5*60000;ended=false;save();paint();customMin.value='';return}
+    setLength(Math.round(v*2)/2);customMin.value='';
+  });
+  customMin.addEventListener('input',function(){customForm.classList.remove('bad')});
+  [].forEach.call(document.querySelectorAll('[data-adj]'),function(b){b.addEventListener('click',function(){
+    var d=+b.dataset.adj*1000;
+    if(S.end){var l=Math.max(1000,S.end-Date.now()+d);S.end=Date.now()+l;if(l>total())S.min=Math.ceil(l/60000);if(l>5*60000)warned=false;ended=false}
+    else if(S.left!=null&&S.left>0){S.left=Math.max(1000,S.left+d);if(S.left>total())S.min=Math.ceil(S.left/60000)}
+    else{S.min=Math.max(0.5,Math.min(180,S.min+d/60000));S.left=null;ended=false}
+    save();markLen();paint();
+  })});
   markLen();
   if(S.end){if(S.end-Date.now()<=0){S.end=null;S.left=0;ended=true;save();paint()}else{warned=S.end-Date.now()<=5*60000;run()}}else paint();
 
