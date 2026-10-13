@@ -31,6 +31,7 @@
   --mango:#ffa53a; --mango-soft:#3d2a14; --coconut:#cf9875; --pineapple:#f3c933; --lime:#7ccb57; --warn:#ff8a70; color-scheme:dark}
 
 *{box-sizing:border-box}
+html,button,a,input,.sq,.name{touch-action:manipulation}
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:1.0625rem;line-height:1.55;margin:0;overflow-x:hidden}
 .wrap{max-width:72rem;margin:0 auto;padding-inline:max(16px,4vw);padding-block:0 2.5rem}
@@ -113,17 +114,17 @@ section.act{padding-block:clamp(2.25rem,6vw,4.25rem);display:grid;gap:1.5rem}
 .cardhead h2 em{font-style:normal;color:var(--mango)}
 .board{border-radius:24px;padding:clamp(.5rem,1.8vw,.95rem)}
 .grid{position:relative;z-index:1;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(.35rem,1.3vw,.65rem);background:var(--bg);border-radius:18px;padding:clamp(.4rem,1.5vw,.85rem)}
-.sq{position:relative;min-height:clamp(6.2rem,21vw,8.6rem);border:1.5px solid var(--line);background:var(--card);color:var(--ink);border-radius:14px;padding:.5rem .45rem;font:650 clamp(.72rem,2.5vw,.95rem)/1.22 var(--body);text-align:center;cursor:pointer;display:grid;align-content:center;gap:.3rem;transition:transform .15s,border-color .15s,background .25s,box-shadow .2s;overflow:hidden;overflow-wrap:anywhere;hyphens:auto}
+.sq{position:relative;min-height:clamp(6.2rem,21vw,8.6rem);border:1.5px solid var(--line);background:var(--card);color:var(--ink);border-radius:14px;padding:.5rem .3rem;font:650 clamp(.7rem,2.45vw,.95rem)/1.22 var(--body);text-align:center;cursor:pointer;display:grid;align-content:center;justify-items:center;gap:.3rem;transition:transform .15s,border-color .15s,background .25s,box-shadow .2s;overflow:hidden;overflow-wrap:break-word;hyphens:auto;-webkit-hyphens:auto}
 .sq:hover{border-color:var(--tile);box-shadow:0 4px 0 -1px var(--tile-soft)}
 .sq:active{transform:scale(.96)}
-.sq .who-stamp{display:none;font-family:var(--display);font-weight:400;font-size:clamp(.82rem,2.9vw,1.12rem);line-height:1.05;color:var(--mango);transform:rotate(-6deg);border:2px dashed var(--mango);border-radius:10px;padding:.2rem .35rem;justify-self:center;max-width:100%}
+.sq .who-stamp{display:none;font-family:var(--display);font-weight:400;font-size:clamp(.68rem,2.7vw,1.1rem);line-height:1.1;color:var(--mango);transform:rotate(-6deg);border:2px dashed var(--mango);border-radius:10px;padding:.18rem .3rem;justify-self:center;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sq.done{background:var(--mango-soft);border-color:var(--mango)}
 .sq.done .txt{color:var(--muted);font-size:.84em}
 .sq.done .who-stamp{display:block}
 .sq.near{border-color:var(--tile);border-width:2.5px;box-shadow:0 0 0 3px var(--tile-soft)}
-.sq.win{background:var(--mango);border-color:var(--mango)}
-.sq.win .txt{color:var(--on-tile)}
-.sq.win .who-stamp{color:var(--on-tile);border-color:var(--on-tile)}
+.sq.won{background:var(--mango);border-color:var(--mango)}
+.sq.won .txt{color:var(--on-tile)}
+.sq.won .who-stamp{color:var(--on-tile);border-color:var(--on-tile)}
 .cardfoot{display:flex;flex-wrap:wrap;gap:.6rem 1rem;align-items:center;justify-content:space-between;color:var(--muted);font-size:.92rem}
 
 .rail{display:grid;gap:1rem;position:sticky;top:calc(env(safe-area-inset-top,0px) + 4.5rem)}
@@ -321,6 +322,7 @@ section.act{padding-block:clamp(2.25rem,6vw,4.25rem);display:grid;gap:1.5rem}
 
 <script>
 (function(){
+  document.documentElement.lang=document.documentElement.lang||'en';
   // [prompt, follow-up to ask, tier: e = most people, m = some people, r = rare]
   var POOL=[
     ["Takes their chai or coffee a very particular way","What's your exact order?","e"],
@@ -391,7 +393,7 @@ section.act{padding-block:clamp(2.25rem,6vw,4.25rem);display:grid;gap:1.5rem}
     S.order.forEach(function(p,i){
       var b=document.createElement('button');b.type='button';b.className='sq';
       var name=S.names[i];if(name){n++;b.classList.add('done')}
-      if(ws[i])b.classList.add('win');else if(ns[i])b.classList.add('near');
+      if(ws[i])b.classList.add('won');else if(ns[i])b.classList.add('near');
       if(i===justIdx)b.classList.add('just');
       b.setAttribute('aria-label',POOL[p][0]+(name?'. Filled by '+name:ns[i]?'. One away from Bingo':'. Empty'));
       var t=document.createElement('span');t.className='txt';t.textContent=POOL[p][0];
