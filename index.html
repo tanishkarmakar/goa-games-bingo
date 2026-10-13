@@ -168,6 +168,19 @@ section.act{padding-block:clamp(2.25rem,6vw,4rem);display:grid;gap:1.4rem}
 .win p{font-size:1.1rem;font-weight:700}
 
 .foot{padding:1.4rem 1rem;text-align:center;font-family:var(--display);font-size:clamp(1.2rem,4vw,1.9rem)}
+
+/* polish */
+section.act,#game{scroll-margin-top:4.75rem}
+.hero{padding-bottom:1.75rem!important}
+.sq{box-shadow:inset 0 1px 0 rgba(255,255,255,.06)}
+.sq .txt{text-wrap:balance}
+.bignum small{font:700 .8rem var(--mono);color:var(--dim);margin-left:auto;letter-spacing:.06em}
+.badges{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.35rem}
+.badge{text-align:center;padding:.36rem .3rem}
+.cardhead-row{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:.5rem 1rem;margin-bottom:1rem}
+.sheet{border-top:1px solid transparent;background-image:linear-gradient(rgba(18,10,38,.94),rgba(18,10,38,.94)),var(--hot);background-origin:border-box;background-clip:padding-box,border-box}
+.steps li{transition:transform .2s,border-color .2s}
+.steps li:hover{transform:translateY(-2px);border-color:var(--line-hi)}
 #confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:50}
 
 @media (prefers-reduced-motion:no-preference){
@@ -285,10 +298,10 @@ section.act{padding-block:clamp(2.25rem,6vw,4rem);display:grid;gap:1.4rem}
       </div>
       <aside class="rail" aria-label="Your progress">
         <div class="stat glass">
-          <div class="bignum"><b id="count">0</b><span>of 16</span></div>
+          <div class="bignum"><b id="count">0</b><span>of 16</span><small id="bPeople">0 people</small></div>
           <div class="meter" aria-hidden="true"><i id="meter"></i></div>
           <p class="mood" id="mood" aria-live="polite">Go say hi.</p>
-          <div class="badges"><span class="badge" id="bBingo">Bingo</span><span class="badge" id="bBongo">Bongo</span><span class="badge" id="bBango">Bango</span><span class="badge" id="bPeople">0 people</span></div>
+          <div class="badges"><span class="badge" id="bBingo">Bingo</span><span class="badge" id="bBongo">Bongo</span><span class="badge" id="bBango">Bango</span></div>
         </div>
         <div class="stat glass tips">
           <p><b>Stuck?</b> Ask the whole group at once.</p>
@@ -343,8 +356,12 @@ section.act{padding-block:clamp(2.25rem,6vw,4rem);display:grid;gap:1.4rem}
   'float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h(i),h(i+vec2(1.,0.)),f.x),mix(h(i+vec2(0.,1.)),h(i+vec2(1.,1.)),f.x),f.y);}'+
   'float fbm(vec2 p){float v=0.,a=.5;for(int i=0;i<4;i++){v+=a*n(p);p*=2.03;a*=.5;}return v;}'+
   'vec3 pal(float x){return vec3(.55,.25,.6)+vec3(.45,.35,.4)*cos(6.2831*(x+vec3(0.,.33,.67)));}'+
-  'vec3 sc(vec2 uv){vec2 p=uv*vec2(r.x/r.y,1.)*1.7;float q=fbm(p+vec2(t*.045,-t*.035));float w=fbm(p*1.25+q*2.2+vec2(-t*.03,t*.05));'+
-  'vec3 col=pal(w*1.15+t*.015);col*=smoothstep(.38,.95,w)*.95+.03;float v=smoothstep(1.25,.15,length(uv-vec2(.5,.45))*1.35);return col*v*.9;}'+
+  'vec3 sc(vec2 uv){vec2 p=uv*vec2(r.x/r.y,1.)*1.6;float q=fbm(p+vec2(t*.04,-t*.03));float w=fbm(p*1.2+q*2.4+vec2(-t*.025,t*.045));'+
+  'vec3 col=mix(vec3(.42,.22,1.),vec3(1.,.16,.66),smoothstep(.35,.75,q));col=mix(col,vec3(.1,.9,1.),smoothstep(.62,.9,w)*.75);'+
+  'col*=pow(smoothstep(.3,.95,w),1.6)*1.1+.015;'+
+  'vec2 o=vec2(.5+.3*sin(t*.23),1.1);vec2 dv=uv-o;float a=atan(dv.x,-dv.y);'+
+  'float bm=smoothstep(.09,0.,abs(a-.55*sin(t*.37)))+smoothstep(.07,0.,abs(a+.5*sin(t*.29+1.7)));col+=bm*smoothstep(1.4,.1,length(dv))*vec3(.55,.4,1.)*.22;'+
+  'float v=smoothstep(1.3,.15,length(uv-vec2(.5,.45))*1.3);return col*v*1.05;}'+
   'void main(){vec2 uv=gl_FragCoord.xy/r;vec2 d=(uv-.5)*.014;vec3 c=vec3(sc(uv+d).r,sc(uv).g,sc(uv-d).b);'+
   'c+=(h(gl_FragCoord.xy+fract(t*7.)*91.)-.5)*.07;c*=.92+.08*sin(gl_FragCoord.y*1.6+t*3.);gl_FragColor=vec4(max(c,0.),1.);}';
   function sh(type,src){var s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS)){return null}return s}
@@ -437,7 +454,7 @@ section.act{padding-block:clamp(2.25rem,6vw,4rem);display:grid;gap:1.4rem}
     });
     $('count').textContent=n;$('meter').style.width=(n/16*100)+'%';
     var people={};S.names.forEach(function(x){if(x)people[norm(x)]=1});var pc=Object.keys(people).length;
-    $('bPeople').textContent=pc+(pc===1?' person':' people');
+    $('bPeople').textContent=pc+(pc===1?' person met':' people met');
     $('bBingo').classList.toggle('on',S.lines.length>=1);$('bBongo').classList.toggle('on',S.lines.length>=2);$('bBango').classList.toggle('on',S.full);
     var L=S.lines.length,near=Object.keys(ns).length,mood='Go say hi.';
     if(S.full)mood='BANGO. Absolute legend.';
@@ -468,6 +485,7 @@ section.act{padding-block:clamp(2.25rem,6vw,4rem);display:grid;gap:1.4rem}
     if(!shown&&!q)g.textContent='No names left.';
   }
   function openSheet(i){
+    clearTimeout(tT);toastEl.hidden=true;
     cur=i;$('sheetQ').textContent=POOL[S.order[i]][0];$('sheetAsk').textContent=POOL[S.order[i]][1];search.value='';
     $('clearBtn').hidden=!S.names[i];
     $('sheetNote').textContent=S.names[i]?'Currently '+S.names[i]+'. Tap to swap.':'Max two squares per person.';
