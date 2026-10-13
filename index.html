@@ -150,6 +150,9 @@ section.act{padding-block:clamp(2.25rem,6vw,4.25rem);display:grid;gap:1.5rem}
 .sheet .grab{width:42px;height:5px;border-radius:9px;background:var(--line);justify-self:center;margin-top:-.3rem}
 @media (min-width:40rem){.sheet .grab{display:none}}
 .sheet .q{font-size:clamp(1.2rem,3.5vw,1.45rem);font-weight:900;line-height:1.25}
+.ask{background:var(--tile-soft);border-radius:14px;padding:.6rem .85rem;display:flex;flex-wrap:wrap;gap:.25rem .5rem;align-items:baseline}
+.ask span{font:700 .72rem var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--tile)}
+.ask b{font-weight:800}
 .search{font:600 1.05rem var(--body);color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:14px;padding:.7rem .9rem;width:100%}
 .search:focus{outline:none;border-color:var(--tile)}
 .sheet .note{color:var(--muted);font-size:.9rem}
@@ -277,6 +280,7 @@ section.act{padding-block:clamp(2.25rem,6vw,4.25rem);display:grid;gap:1.5rem}
         <div class="stat tips">
           <p><b>Stuck?</b> Pick the square that looks hardest and ask the whole group at once.</p>
           <p><b>Glowing squares</b> are one away from BINGO.</p>
+          <p><b>Every square has a follow-up question.</b> Ask it. That's where the good stories are.</p>
         </div>
       </aside>
     </div>
@@ -293,6 +297,7 @@ section.act{padding-block:clamp(2.25rem,6vw,4.25rem);display:grid;gap:1.5rem}
     <div class="grab" aria-hidden="true"></div>
     <p class="eyebrow">Find someone who…</p>
     <p class="q" id="sheetQ"></p>
+    <p class="ask"><span>Then ask</span> <b id="sheetAsk"></b></p>
     <input class="search" id="search" type="search" autocomplete="off" autocapitalize="words" enterkeyhint="done" placeholder="Type to filter, or just tap a name" aria-label="Filter names">
     <div class="namegrid" id="sheetNames"></div>
     <p class="note" id="sheetNote">Each person can fill two of your squares.</p>
@@ -316,16 +321,48 @@ section.act{padding-block:clamp(2.25rem,6vw,4.25rem);display:grid;gap:1.5rem}
 
 <script>
 (function(){
-  var POOL=["Has been on a flight longer than 12 hours","Has visited the other country (India or the US)","Speaks three or more languages","Has lived in more than three cities","Has a favourite city in another country","Can teach you a phrase in another language","Takes their chai or coffee a very specific way","Doesn't drink tea or coffee at all","Has a favourite street food (ask which!)","Has a comfort dish they cook for friends","Plays an instrument or sings","Follows cricket","Has done a long trek or hike","Has a hobby with no screens involved","Has met someone famous","Has a show you must watch (get the name!)","Uses dark mode on everything","Has a Slack emoji they overuse","Has more than 30 browser tabs open right now","Can't whistle","Has been to Goa before","Is a proper morning person","Has already been to the beach this trip","Was born in the same month as you","Has a pet (ask for a photo!)","Has a party trick (make them show you)","Has eaten something on a dare","Has sketched an idea on a napkin"];
+  // [prompt, follow-up to ask, tier: e = most people, m = some people, r = rare]
+  var POOL=[
+    ["Takes their chai or coffee a very particular way","What's your exact order?","e"],
+    ["Has a Slack emoji they use way too much","Which one? Show me.","e"],
+    ["Uses dark mode on literally everything","Is there one app where you don't?","e"],
+    ["Has a show they make everyone watch","What is it, and why?","e"],
+    ["Has 30+ browser tabs open right now","Can you prove it?","e"],
+    ["Has a favourite street food","Where do you get the best one?","e"],
+    ["Has already been to the beach this trip","Sunrise or sunset?","e"],
+    ["Speaks three or more languages","Teach me one word.","e"],
+    ["Is a proper morning person","What time did you wake up today?","e"],
+    ["Has a go-to karaoke song","Will you sing one line?","e"],
+    ["Has been on a flight longer than 12 hours","What's your longest ever?","m"],
+    ["Has been to both India and the US","Favourite thing about each?","m"],
+    ["Has lived in more than three cities","Which one was the best?","m"],
+    ["Plays an instrument or sings","What was the first song you learned?","m"],
+    ["Follows cricket","Who's your team?","m"],
+    ["Has a hobby with zero screens","How did you get into it?","m"],
+    ["Can cook one dish really, really well","What is it? Can I come over?","m"],
+    ["Has done a long trek or hike","Where, and would you do it again?","m"],
+    ["Can't whistle","Try anyway. Please.","m"],
+    ["Has been to Goa before","What's your one tip for this trip?","m"],
+    ["Has a pet","Photo, please.","m"],
+    ["Has sketched an idea on a napkin","Did it ever ship?","m"],
+    ["Has met someone famous","Who, and what happened?","r"],
+    ["Has a party trick","Show me. Right now.","r"],
+    ["Has eaten something on a dare","What was it, and was it worth it?","r"],
+    ["Has been on TV or in a newspaper","What for?","r"],
+    ["Can juggle, moonwalk or do a cartwheel","Demonstration time.","r"],
+    ["Has a talent nobody at work knows about","What is it? Your secret's safe.","r"]
+  ];
+  var MUST=11; // "Has been to both India and the US" is on every card, to mix the two offices
   var NAMES=["Arushi","Bhumika","Jonnie","Justin","Kevin","Kiran","Maharaj","Mauricio","Mike","Nima","Nirjhar","Prayas","Priyanka","Saloni","Sandeep","Shir","Tanish"];
   var LINES=[[0,1,2,3],[4,5,6,7],[8,9,10,11],[12,13,14,15],[0,4,8,12],[1,5,9,13],[2,6,10,14],[3,7,11,15],[0,5,10,15],[3,6,9,12]];
   var QUIPS=["Stamped!","Look at you, mingling.","Another one!","Networking, but make it Goa.","Square secured.","New fact unlocked.","Smooth.","The card grows stronger."];
-  var KEY='gg-bingo-v2',S;
+  var KEY='gg-bingo-v3',S;
   var $=function(id){return document.getElementById(id)};
   function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}return a}
   function blank(){return {me:'',order:[],names:Array(16).fill(''),lines:[],full:false}}
-  function deal(){S.order=shuffle(POOL.map(function(_,i){return i})).slice(0,16);S.names=Array(16).fill('');S.lines=[];S.full=false}
-  function load(){try{var s=JSON.parse(localStorage.getItem(KEY));if(s&&typeof s.me==='string'&&Array.isArray(s.names))return s}catch(e){}return blank()}
+  function tier(t,n,must){var idx=[];POOL.forEach(function(p,i){if(p[2]===t&&i!==must)idx.push(i)});shuffle(idx);if(must!=null)idx.unshift(must);return idx.slice(0,n)}
+  function deal(){S.order=shuffle(tier('e',6).concat(tier('m',7,MUST),tier('r',3)));S.names=Array(16).fill('');S.lines=[];S.full=false}
+  function load(){try{var s=JSON.parse(localStorage.getItem(KEY));if(s&&typeof s.me==='string'&&Array.isArray(s.names)&&Array.isArray(s.order)&&s.order.every(function(i){return POOL[i]}))return s}catch(e){}return blank()}
   function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
   function norm(s){return String(s||'').trim().replace(/\s+/g,' ').toLowerCase()}
   function tidy(s){s=String(s).trim().replace(/\s+/g,' ');return s.charAt(0).toUpperCase()+s.slice(1)}
@@ -356,8 +393,8 @@ section.act{padding-block:clamp(2.25rem,6vw,4.25rem);display:grid;gap:1.5rem}
       var name=S.names[i];if(name){n++;b.classList.add('done')}
       if(ws[i])b.classList.add('win');else if(ns[i])b.classList.add('near');
       if(i===justIdx)b.classList.add('just');
-      b.setAttribute('aria-label',POOL[p]+(name?'. Filled by '+name:ns[i]?'. One away from Bingo':'. Empty'));
-      var t=document.createElement('span');t.className='txt';t.textContent=POOL[p];
+      b.setAttribute('aria-label',POOL[p][0]+(name?'. Filled by '+name:ns[i]?'. One away from Bingo':'. Empty'));
+      var t=document.createElement('span');t.className='txt';t.textContent=POOL[p][0];
       var w=document.createElement('span');w.className='who-stamp';w.textContent=name;
       b.appendChild(t);b.appendChild(w);b.addEventListener('click',function(){openSheet(i)});grid.appendChild(b);
     });
@@ -395,7 +432,7 @@ section.act{padding-block:clamp(2.25rem,6vw,4.25rem);display:grid;gap:1.5rem}
     if(!shown&&!q){g.textContent='No names left to pick.'}
   }
   function openSheet(i){
-    cur=i;$('sheetQ').textContent=POOL[S.order[i]];search.value='';
+    cur=i;$('sheetQ').textContent=POOL[S.order[i]][0];$('sheetAsk').textContent=POOL[S.order[i]][1];search.value='';
     $('clearBtn').hidden=!S.names[i];
     $('sheetNote').textContent=S.names[i]?'Currently '+S.names[i]+'. Tap another name to swap.':'Each person can fill two of your squares.';
     drawNames();scrim.hidden=false;
