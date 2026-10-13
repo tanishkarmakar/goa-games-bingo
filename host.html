@@ -158,6 +158,70 @@ body.view .status{font-size:clamp(1rem,2.6vh,1.5rem)}
   .ring.late .time{animation:beat 1s ease-in-out infinite}
   .title{animation:glitch 5s steps(1) infinite}
 }
+
+/* intro deck (TV only) */
+.deck{position:fixed;inset:0;z-index:30;display:none;font-size:clamp(16px,1.17vw,32px);cursor:pointer;user-select:none}
+body.view.deckon .deck{display:block}
+body.view.deckon .wrap{visibility:hidden}
+.slide{position:absolute;inset:0;display:grid;align-content:center;gap:clamp(1em,3vh,2.2em);padding:clamp(2em,7vh,5em) clamp(2em,8vw,9em) clamp(5em,12vh,7em);opacity:0;visibility:hidden;transform:translateY(16px) scale(.99);transition:opacity .5s ease,transform .6s cubic-bezier(.2,.9,.3,1),visibility 0s .5s}
+.slide.on{opacity:1;visibility:visible;transform:none;transition:opacity .5s ease,transform .6s cubic-bezier(.2,.9,.3,1)}
+.sk{font:700 clamp(.8em,1.3vw,1.1em) var(--mono);letter-spacing:.22em;text-transform:uppercase;color:var(--cyan)}
+.sh{font-family:var(--display);font-weight:400;font-size:clamp(2.4em,5.6vw,5.4em);line-height:1;color:#fff;text-shadow:-.035em 0 rgba(255,47,179,.85),.035em 0 rgba(46,240,255,.85),0 0 .5em rgba(139,92,255,.45);text-wrap:balance}
+.sh em{font-style:normal;background:var(--hot);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:none}
+.sp{font-size:clamp(1.15em,2.1vw,1.85em);line-height:1.35;color:var(--muted);font-weight:700;max-width:38ch;text-wrap:balance}
+.sp b{color:#fff}
+.split{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);align-items:center;gap:clamp(2em,5vw,5em)}
+.mega{font-family:var(--neon);font-weight:400;font-size:clamp(3.6em,9.2vw,9.5em);line-height:.98;color:#fff;letter-spacing:.01em;text-shadow:-.04em 0 rgba(255,47,179,.95),.04em 0 rgba(46,240,255,.95),0 0 .35em rgba(139,92,255,.6)}
+.mega span{display:block}
+.split .sh{font-size:clamp(2.2em,4.4vw,4.6em)}
+.deck .ball{width:100%;max-width:min(26em,52vh);height:auto;justify-self:center;overflow:visible;filter:drop-shadow(0 0 40px rgba(139,92,255,.6))}
+.deck .ball .spark{transform-box:fill-box;transform-origin:center}
+.qrbig{justify-self:center;width:min(30em,56vh);aspect-ratio:1;background:#fff;border-radius:32px;padding:clamp(1em,2.4vh,1.6em);box-shadow:0 0 0 4px rgba(255,255,255,.12),0 0 80px rgba(255,47,179,.35),0 0 140px rgba(46,240,255,.18);display:grid;place-items:center;color:#14082b;font-weight:800}
+.qrbig img,.qrbig canvas{width:100%!important;height:auto!important;display:block}
+.or{display:grid;gap:.5em;padding:clamp(1em,2.4vh,1.5em) clamp(1.1em,2vw,1.6em);border-radius:22px}
+.or small{font:700 clamp(.75em,1.1vw,.95em) var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
+.chan{font:700 clamp(1em,1.9vw,1.6em) var(--mono);color:#fff;overflow-wrap:anywhere}
+.chan::before{content:"#";color:var(--pink);margin-right:.1em}
+.steps4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(.8em,1.6vw,1.4em)}
+.st{display:grid;align-content:start;gap:.9em;padding:clamp(1.2em,3vh,2em) clamp(1em,1.6vw,1.6em);min-height:clamp(12em,34vh,20em)}
+.st .n{font-family:var(--neon);font-size:clamp(3em,6vw,5.5em);line-height:.9;color:#fff;text-shadow:-.04em 0 rgba(255,47,179,.9),.04em 0 rgba(46,240,255,.9)}
+.st h3{font-family:var(--display);font-weight:400;font-size:clamp(1.15em,1.9vw,1.75em);line-height:1.1;margin:0}
+.st p{margin:0;color:var(--muted);font-weight:700;font-size:clamp(.95em,1.4vw,1.25em);line-height:1.35}
+.tiers3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(.8em,2vw,1.8em)}
+.tier{display:grid;justify-items:center;gap:1em;padding:clamp(1.2em,3.4vh,2.4em) 1em;text-align:center}
+.tier .w{font-family:var(--display);font-size:clamp(1.8em,3.6vw,3.4em);line-height:1;color:currentColor;text-shadow:0 0 .5em currentColor}
+.tier .d{font:700 clamp(.8em,1.2vw,1.05em) var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.tB{color:var(--pink)}.tO{color:var(--cyan)}.tF{color:var(--gold)}
+.mini{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(4px,.6vw,8px);width:min(12em,26vh)}
+.mini i{aspect-ratio:1;border-radius:7px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1)}
+.mini i.on{background:currentColor;border-color:transparent;box-shadow:0 0 14px currentColor}
+.rules3{display:grid;gap:clamp(.8em,2.2vh,1.4em);max-width:60em}
+.rule{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:clamp(1em,2vw,1.6em);padding:clamp(1em,2.6vh,1.6em) clamp(1.2em,2.4vw,2em)}
+.rule .ic{font-size:clamp(2em,4vw,3.4em);line-height:1}
+.rule h3{margin:0;font-family:var(--display);font-weight:400;font-size:clamp(1.3em,2.6vw,2.3em);line-height:1.1}
+.rule p{margin:.3em 0 0;color:var(--muted);font-weight:700;font-size:clamp(.95em,1.5vw,1.3em)}
+.ready{justify-items:center;text-align:center}
+.ready .mega{font-size:clamp(5em,17vw,15em)}
+.deckfoot{position:absolute;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:space-between;gap:1em;padding:clamp(1em,3vh,1.8em) clamp(2em,8vw,9em);font:700 clamp(.75em,1.1vw,.95em) var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
+.dots{display:flex;gap:.5em}
+.dots i{width:.6em;height:.6em;border-radius:999px;background:rgba(255,255,255,.2);transition:width .3s,background .3s}
+.dots i.on{width:2em;background:var(--hot)}
+.deckfoot .brand{font-family:var(--display);letter-spacing:.04em;color:var(--muted)}
+.deckbar{display:inline-flex;align-items:center;gap:.35rem;padding:.2rem .25rem .2rem .7rem;border:1px solid var(--line-hi);border-radius:999px;background:rgba(255,255,255,.04)}
+.deckbar .lbl{font:700 .7rem var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--cyan);white-space:nowrap}
+@media (prefers-reduced-motion:no-preference){
+  .deck .ball .facets{animation:spin 1.6s linear infinite}
+  .deck .ball .spark{animation:twinkle 2.4s ease-in-out infinite}
+  .deck .ball .s2{animation-delay:-.8s}.deck .ball .s3{animation-delay:-1.6s}.deck .ball .s4{animation-delay:-1.2s}
+  .deck .ball .swing{animation:swing 6s ease-in-out infinite alternate;transform-origin:120px 0;transform-box:view-box}
+  .slide.on .st,.slide.on .tier,.slide.on .rule{animation:rise .6s cubic-bezier(.2,.9,.3,1) both}
+  .slide.on > * > :nth-child(2){animation-delay:.08s}.slide.on > * > :nth-child(3){animation-delay:.16s}.slide.on > * > :nth-child(4){animation-delay:.24s}
+}
+@keyframes spin{to{transform:translateX(16px)}}
+@keyframes twinkle{0%,100%{transform:scale(.2);opacity:0}50%{transform:scale(1);opacity:1}}
+@keyframes swing{from{transform:rotate(-3deg)}to{transform:rotate(3deg)}}
+@keyframes rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+@media (max-width:52rem){.split,.steps4,.tiers3{grid-template-columns:1fr}.deck .ball{display:none}}
 @keyframes pop{from{transform:scale(.85) rotate(-2deg)}to{transform:none}}
 @keyframes slidein{from{transform:translateX(18px) scale(.97);opacity:.2}to{transform:none;opacity:1}}
 @keyframes beat{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
@@ -174,6 +238,8 @@ body.view .status{font-size:clamp(1rem,2.6vh,1.5rem)}
     <div><p class="eyebrow">Host screen</p><h1 class="title">BINGO, BONGO, BANGO!</h1></div>
     <div class="row">
       <button class="btn small" id="soundBtn" type="button" aria-pressed="true">Sound on</button>
+      <span class="deckbar ctl" id="deckbar"><span class="lbl" id="dkLabel">Deck 1/6</span><button class="btn small" id="dkBack" type="button" aria-label="Previous slide">‹</button><button class="btn small primary" id="dkNext" type="button">Next ›</button></span>
+      <button class="btn small ctl" id="dkShow" type="button" hidden>Show intro deck</button>
       <button class="btn small" id="tvBtn" type="button" title="Open the TV screen. It mirrors this one, minus the controls.">Open TV view</button>
       <button class="btn small" id="cleanBtn" type="button" aria-pressed="false">Hide controls</button>
       <button class="btn small ctl" id="fsBtn" type="button">Full screen</button>
@@ -253,6 +319,93 @@ body.view .status{font-size:clamp(1rem,2.6vh,1.5rem)}
   </div>
 </div>
 
+
+<div class="deck" id="deck" aria-live="polite">
+  <section class="slide" aria-label="Title">
+    <div class="split">
+      <div style="display:grid;gap:clamp(1rem,3vh,2rem)">
+        <p class="sk">Sales Cloud UX · Goa onsite</p>
+        <h2 class="mega"><span>BINGO,</span><span>BONGO,</span><span>BANGO!</span></h2>
+        <p class="sp">Find your people. Fill your card. <b>Yell it.</b></p>
+      </div>
+    <svg class="ball" viewBox="0 0 240 300" role="img" aria-label="A spinning mirror ball">
+      <defs>
+        <pattern id="facets" width="16" height="16" patternUnits="userSpaceOnUse">
+          <rect width="16" height="16" fill="#1b1036"/>
+          <rect x="1" y="1" width="6.4" height="6.4" fill="#efe6ff"/>
+          <rect x="8.6" y="1" width="6.4" height="6.4" fill="#7d62ff"/>
+          <rect x="1" y="8.6" width="6.4" height="6.4" fill="#ff6fd0"/>
+          <rect x="8.6" y="8.6" width="6.4" height="6.4" fill="#57eaff"/>
+        </pattern>
+        <radialGradient id="shade" cx="36%" cy="30%" r="72%">
+          <stop offset="0" stop-color="#ffffff" stop-opacity=".6"/>
+          <stop offset=".35" stop-color="#ffffff" stop-opacity="0"/>
+          <stop offset="1" stop-color="#05020c" stop-opacity=".9"/>
+        </radialGradient>
+        <clipPath id="orb"><circle cx="120" cy="170" r="98"/></clipPath>
+      </defs>
+      <g class="swing">
+        <line x1="120" y1="0" x2="120" y2="72" stroke="#b9acdf" stroke-width="2"/>
+        <rect x="112" y="64" width="16" height="10" rx="2" fill="#b9acdf"/>
+        <g clip-path="url(#orb)"><rect class="facets" x="0" y="70" width="260" height="200" fill="url(#facets)"/></g>
+        <circle cx="120" cy="170" r="98" fill="url(#shade)"/>
+        <circle cx="120" cy="170" r="98" fill="none" stroke="rgba(255,255,255,.25)"/>
+      </g>
+      <path class="spark s1" d="M40 92 l3 9 9 3 -9 3 -3 9 -3 -9 -9 -3 9 -3z" fill="#2ef0ff"/>
+      <path class="spark s2" d="M206 118 l2.4 7 7 2.4 -7 2.4 -2.4 7 -2.4 -7 -7 -2.4 7 -2.4z" fill="#ff2fb3"/>
+      <path class="spark s3" d="M196 252 l3 9 9 3 -9 3 -3 9 -3 -9 -9 -3 9 -3z" fill="#ffcf3d"/>
+      <path class="spark s4" d="M30 236 l2.4 7 7 2.4 -7 2.4 -2.4 7 -2.4 -7 -7 -2.4 7 -2.4z" fill="#ffffff"/>
+    </svg>
+    </div>
+  </section>
+  <section class="slide" aria-label="Get your card">
+    <div class="split">
+      <div style="display:grid;gap:clamp(1rem,3vh,1.8rem)">
+        <p class="sk">Step zero</p>
+        <h2 class="sh">Devices out.<br><em>Grab your card.</em></h2>
+        <p class="sp">Scan the code. Tap your name. Every device deals its own card.</p>
+        <div class="or glass"><small>Or tap the link in Slack</small><span class="chan">temp-ux-sales-oct26-india-onsite</span></div>
+      </div>
+      <div class="qrbig" id="qr2" aria-label="QR code for the player card"></div>
+    </div>
+  </section>
+  <section class="slide" aria-label="How to play">
+    <p class="sk">How it works</p>
+    <h2 class="sh">Four moves. <em>That's it.</em></h2>
+    <div class="steps4">
+      <div class="st glass"><span class="n">1</span><h3>Find a match</h3><p>Ask around till someone fits a square.</p></div>
+      <div class="st glass"><span class="n">2</span><h3>Tap it</h3><p>Tap the square, then tap their name.</p></div>
+      <div class="st glass"><span class="n">3</span><h3>Ask the follow-up</h3><p>It's on your card. That's where the stories are.</p></div>
+      <div class="st glass"><span class="n">4</span><h3>Two max</h3><p>Two squares per person. Keep moving.</p></div>
+    </div>
+  </section>
+  <section class="slide" aria-label="Three ways to win">
+    <p class="sk">Three ways to win</p>
+    <h2 class="sh">Win big. <em>Yell bigger.</em></h2>
+    <div class="tiers3">
+      <div class="tier glass tB"><div class="mini"><i></i><i></i><i></i><i></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><span class="w">BINGO!</span><span class="d">1 line</span></div>
+      <div class="tier glass tO"><div class="mini"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i class="on"></i><i></i><i></i><i></i><i class="on"></i><i></i><i></i><i></i><i class="on"></i><i></i></div><span class="w">BONGO!</span><span class="d">2 lines</span></div>
+      <div class="tier glass tF"><div class="mini"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div><span class="w">BANGO!</span><span class="d">Full card</span></div>
+    </div>
+    <p class="sp">Shout it out. I'll put you in the <b>Hall of Fame</b>.</p>
+  </section>
+  <section class="slide" aria-label="House rules">
+    <p class="sk">House rules</p>
+    <h2 class="sh">Keep it <em>easy.</em></h2>
+    <div class="rules3">
+      <div class="rule glass"><span class="ic">🧭</span><div><h3>Find the people you know least.</h3><p>New faces first. Old friends can wait.</p></div></div>
+      <div class="rule glass"><span class="ic">🙅</span><div><h3>Pass on anything.</h3><p>Any square, any question. No reason needed.</p></div></div>
+      <div class="rule glass"><span class="ic">✨</span><div><h3>Chase stories, not squares.</h3><p>The best card isn't the fullest one.</p></div></div>
+    </div>
+  </section>
+  <section class="slide ready" aria-label="Ready">
+    <p class="sk">On the clock</p>
+    <div class="mega" id="deckTime">20:00</div>
+    <p class="sp">Go find your people.</p>
+  </section>
+  <div class="deckfoot"><span class="brand">BINGO, BONGO, BANGO!</span><span class="dots" id="dots"></span><span id="deckHint">→ next</span></div>
+</div>
+
 <div class="cele" id="cele" hidden>
   <div class="box" role="alert"><div class="big" id="celeBig">BINGO!</div><div class="who" id="celeWho"></div><div class="sub" id="celeSub"></div></div>
 </div>
@@ -319,7 +472,7 @@ body.view .status{font-size:clamp(1rem,2.6vh,1.5rem)}
   function started(){return !!S.end||S.left!=null}
   function paint(){
     document.body.classList.toggle('ticking',started()&&leftNow()>0);
-    var l=leftNow();val.setAttribute('stroke-dashoffset',String(C*(1-Math.max(0,l)/total())));
+    var l=leftNow();var dt=$('deckTime');if(dt)dt.textContent=fmt(started()?l:total());val.setAttribute('stroke-dashoffset',String(C*(1-Math.max(0,l)/total())));
     ring.classList.toggle('late',started()&&l<=5*60000&&l>0);
     if(started()&&l<=0){timeEl.textContent='Time!';timeEl.classList.add('done');status.textContent='Back to the middle.';goBtn.textContent='Start';return}
     timeEl.classList.remove('done');timeEl.textContent=fmt(l);
@@ -336,7 +489,7 @@ body.view .status{font-size:clamp(1rem,2.6vh,1.5rem)}
   goBtn.addEventListener('click',function(){
     if(S.end){S.left=Math.max(0,S.end-Date.now());S.end=null;clearInterval(iv);iv=null;save();paint();return}
     if(S.left===0)S.left=null;if(S.left==null){warned=false;ended=false}
-    S.end=Date.now()+(S.left!=null?S.left:total());S.left=null;save();SND.start();run();markLen();
+    S.end=Date.now()+(S.left!=null?S.left:total());S.left=null;save();SND.start();run();markLen();if(Dk&&Dk.on)goSlide(NS);
     if(navigator.wakeLock){navigator.wakeLock.request('screen').catch(function(){})}
   });
   $('resetBtn').addEventListener('click',function(){clearInterval(iv);iv=null;S.end=null;S.left=null;warned=false;ended=false;save();paint();markLen()});
@@ -390,7 +543,8 @@ body.view .status{font-size:clamp(1rem,2.6vh,1.5rem)}
 
   var qrEl=$('qr'),linkIn=$('link');
   function drawQR(){var url=(S.link||DEFAULT_LINK).trim();linkIn.value=url;$('urltext').textContent=url.replace(/^https?:\/\//,'');qrEl.innerHTML='';
-    if(window.QRCode){try{new QRCode(qrEl,{text:url,width:256,height:256,colorDark:'#14082b',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M})}catch(e){qrEl.textContent='QR unavailable'}}else qrEl.textContent='QR unavailable'}
+    if(window.QRCode){try{new QRCode(qrEl,{text:url,width:256,height:256,colorDark:'#14082b',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M})}catch(e){qrEl.textContent='QR unavailable'}}else qrEl.textContent='QR unavailable';
+    var q2=$('qr2');if(q2){q2.innerHTML='';if(window.QRCode){try{new QRCode(q2,{text:url,width:512,height:512,colorDark:'#14082b',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M})}catch(e){q2.textContent='QR unavailable'}}else q2.textContent='QR unavailable'}}
   $('linkBtn').addEventListener('click',function(){var v=linkIn.value.trim();if(!v)return;S.link=v;save();drawQR()});
   linkIn.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();$('linkBtn').click()}});
   drawQR();
@@ -403,6 +557,25 @@ body.view .status{font-size:clamp(1rem,2.6vh,1.5rem)}
 
   $('tvBtn').addEventListener('click',function(){var w=window.open('display.html','gg-tv','popup,width=1280,height=720');if(w)w.focus();else location.href='display.html'});
 
+  var DK='gg-deck',slides=[].slice.call(document.querySelectorAll('.slide')),NS=slides.length,dots=$('dots');
+  slides.forEach(function(){dots.appendChild(document.createElement('i'))});
+  function dload(){try{var d=JSON.parse(localStorage.getItem(DK));if(d&&typeof d.i==='number')return d}catch(e){}return {on:true,i:0}}
+  var Dk=dload();
+  function drender(){document.body.classList.toggle('deckon',!!Dk.on);
+    slides.forEach(function(sl,j){var on=Dk.on&&j===Dk.i;sl.classList.toggle('on',on);sl.setAttribute('aria-hidden',on?'false':'true')});
+    [].forEach.call(dots.children,function(d,j){d.classList.toggle('on',j===Dk.i)});
+    var last=Dk.i===NS-1;$('deckHint').textContent=last?'→ go live':'→ next';
+    $('deckbar').hidden=!Dk.on;$('dkShow').hidden=!!Dk.on;$('dkLabel').textContent='Deck '+(Dk.i+1)+'/'+NS;
+    $('dkNext').textContent=last?'Go live ›':'Next ›';$('dkBack').disabled=Dk.i===0}
+  function goSlide(i){if(i>=NS)Dk={on:false,i:NS-1};else Dk={on:true,i:Math.max(0,i)};try{localStorage.setItem(DK,JSON.stringify(Dk))}catch(e){}drender()}
+  function dNext(){goSlide(Dk.on?Dk.i+1:0)}function dBack(){if(Dk.on)goSlide(Dk.i-1)}
+  $('dkNext').addEventListener('click',dNext);$('dkBack').addEventListener('click',dBack);$('dkShow').addEventListener('click',function(){goSlide(0)});
+  addEventListener('storage',function(e){if(e.key===DK){Dk=dload();drender()}});
+  document.addEventListener('keydown',function(e){if(!Dk.on)return;var tag=document.activeElement&&document.activeElement.tagName;if(/INPUT|SELECT|TEXTAREA/.test(tag))return;
+    var fwd=e.key==='ArrowRight'||e.key==='PageDown'||(VIEW&&(e.key===' '||e.key==='Enter'||e.key==='ArrowDown'));var bk=e.key==='ArrowLeft'||e.key==='PageUp'||(VIEW&&e.key==='ArrowUp');
+    if(fwd){e.preventDefault();dNext()}else if(bk){e.preventDefault();dBack()}});
+  drender();
+
   if(VIEW){
     document.body.classList.add('clean','view');document.title='BINGO, BONGO, BANGO!';
     var eb=document.querySelector('.top .eyebrow');eb.textContent='Sales Cloud UX · Live';eb.classList.add('live');
@@ -410,9 +583,13 @@ body.view .status{font-size:clamp(1rem,2.6vh,1.5rem)}
     ping();setInterval(ping,2000);document.addEventListener('visibilitychange',ping);
     addEventListener('pagehide',function(){try{localStorage.removeItem(PING)}catch(e){}});
     var un=document.createElement('button');un.type='button';un.className='unlock';un.innerHTML='Click once for <b>sound</b> + <b>full screen</b>';
-    un.addEventListener('click',function(){try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();actx.resume()}catch(e){}
+    var unlocked=false,skip=false;
+    function unlock(){if(unlocked)return;unlocked=true;try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();actx.resume()}catch(e){}
       var d=document.documentElement;if(d.requestFullscreen)d.requestFullscreen().catch(function(){});
-      if(navigator.wakeLock)navigator.wakeLock.request('screen').catch(function(){});un.remove()});
+      if(navigator.wakeLock)navigator.wakeLock.request('screen').catch(function(){});un.remove()}
+    document.addEventListener('pointerdown',function(){if(!unlocked){skip=true;unlock()}},true);
+    document.addEventListener('keydown',unlock,true);
+    $('deck').addEventListener('click',function(e){if(skip){skip=false;return}if(e.clientX<innerWidth*.2)dBack();else dNext()});
     document.body.appendChild(un);
     addEventListener('storage',function(e){
       if(e.key!==KEY||!e.newValue)return;var n;try{n=JSON.parse(e.newValue)}catch(x){return}if(!n||!n.b||!n.f)return;if(!n.o)n.o=[];
